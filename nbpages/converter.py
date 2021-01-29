@@ -26,7 +26,8 @@ def init_logger():
 class NBPagesConverter(object):
     def __init__(self, nb_path, output_path=None, template_file=None,
                  overwrite=False, kernel_name=None, output_type='rst',
-                 nb_version=4, base_path=None, report_file=None, reporter=None):
+                 nb_version=4, base_path=None, report_file=None, reporter=None,
+                 timeout=900):
         self.nb_path = path.abspath(nb_path)
         fn = path.basename(self.nb_path)
         self.path_only = path.dirname(self.nb_path)
@@ -70,7 +71,7 @@ class NBPagesConverter(object):
         self._output_path = path.join(self.output_path,
                                    '{0}.{1}'.format(self.nb_name, self._output_type.lower()))
 
-        self._execute_kwargs = dict(timeout=900)
+        self._execute_kwargs = dict(timeout=timeout)
         if kernel_name:
             self._execute_kwargs['kernel_name'] = kernel_name
 
