@@ -35,27 +35,28 @@ def make_html_index(converted_files, html_template, outfn='index.html',
                              autoescape=jinja2.select_autoescape(['html', 'xml']))
     templ = env.get_template(fn)
 
+    converted_file_paths = []
+    converted_file_dicts = []
     if relpaths:
         outdir = os.path.realpath(os.path.dirname(outfn) if outfn else os.path.curdir)
 
-        if isinstance(converted_files[0], str):
-            converted_file_paths = [os.path.relpath(os.path.realpath(page), outdir)
-                               for page in converted_files]
-            converted_file_dicts = [dict(output_file_path=os.path.relpath(os.path.realpath(page), outdir), name=page, title=page)
-                               for page in converted_files]
-        else:
-            converted_file_paths = [os.path.relpath(os.path.realpath(page['output_file_path']), outdir)
-                               for page in converted_files]
-            converted_file_dicts = [dict(output_file_path=os.path.relpath(os.path.realpath(page['output_file_path']), outdir), name=page['name'], title=page['title'])
-                               for page in converted_files]
+        for page in converted_files:
+            if isinstance(page, str):
+                converted_file_paths.append(os.path.relpath(os.path.realpath(page), outdir))
+                converted_file_dicts.append(dict(output_file_path=os.path.relpath(os.path.realpath(page), outdir),
+                                                 name=page, title=page))
+            else:
+                converted_file_paths.append(os.path.relpath(os.path.realpath(page['output_file_path']), outdir))
+                converted_file_dicts.append(dict(output_file_path=os.path.relpath(os.path.realpath(page['output_file_path']), outdir),
+                                                 name=page['name'], title=page['title']))
     else:
-        if isinstance(converted_files[0], str):
-            converted_file_paths = converted_files
-            converted_file_dictss = [dict(output_file_path=page, name=page, title=page)
-                               for page in converted_files]
-        else:
-            converted_file_paths = [x['output_file_path'] for x in converted_files]
-            converted_file_dicts = [converted_files]
+        for page in converted_files:
+            if isinstance(page, str):
+                converted_file_paths.append(page)
+                converted_file_dicts.append(dict(output_file_path=page, name=page, title=page))
+            else:
+                converted_file_paths.append(page['output_file_path'])
+                converted_file_dicts.append(page)
 
     # sorts notebooks into "groups" of their parent directories
     result = collections.defaultdict(list)
